@@ -6,5 +6,8 @@
   "dependencies": {
     "vuepress": "^1.0.0",
     "vuepress-theme-meteorlxy": "^1.0.1"
+  },
+  "devDependencies": {
+    "vuepress-plugin-seo": "^0.1.2"
   }
 }
