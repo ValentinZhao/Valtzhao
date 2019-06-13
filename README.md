@@ -1,4 +1,5 @@
 # Valtzhao
+[![Build Status](https://travis-ci.org/ValentinZhao/Valtzhao.svg?branch=master)](https://travis-ci.org/ValentinZhao/Valtzhao)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/40293541-d919-415f-9ff4-937ac72028be/deploy-status)](https://app.netlify.com/sites/practical-bohr-77f47c/deploys)
 
 
@@ -8,6 +9,7 @@ Still under construction.
 
 ## Features
 
+- [x] Add Automatical Deployment Process 
 - [ ] Add Google Analytics
 - [ ] Add Google Site Verification
 - [ ] Add Baidu Site Verfication
