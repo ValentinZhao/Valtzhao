@@ -287,10 +287,88 @@ after_success:
 # 验证自动部署
 验证这一步就是最轻松的了，毕竟我们做这一套就是为了省去重复的劳动。我们在本地拉下来最新的代码，自己做些修改然后再push到master上面，登录Travis主页来看Deploy Log，这个地方就不详细讲啦，大概是没什么问题了~
 
+# 最后一步
+那么我们现在已经可以通过CI的方式把代码自动打包成静态资源，但是作为Web服务器，你需要服务器服务才能通过HTTP请求来请求到这个资源，也就是说得有人给你提供HTTP服务。这就需要我们在服务器上起相关的Web服务啦，那么老生常谈用的最多的就是`Apache`，你肯定听过，但是这个对我们来说太重，我们只需要使用社区很火热的`Nginx`即可。
+
+## 安装Node、npm
+是的，先不着急起服务，我们先要搞定编译环境，毕竟我们的自动部署最后也只不过是进入规定的路径然后`npm run build`，生成了一套静态资源而已。那么如果想要成功在我们的服务器上面编译，相关环境和依赖肯定要准备好，这一点跟你在本地开发是一样的。首先是安装`Nodejs`（**下面的命令先别敲！**）
+```bash
+sudo apt-get update
+sudo apt-get install nodejs
+```
+这样装的是默认的`4.x`版本的Node，还是不太行，笔者个人比较习惯使用`8.11.6`的Node版本，坑比较少
+```bash
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo apt-get install npm
+```
+这时候就可以去你的项目根目录下来build看看能不能成功
+
+## 安装Nginx
+安装nginx是非常简单的，上面笔者也说了自己的环境是`Ubuntu 16.04`哈，下面的命令我们都基于这个发行版来写。首先就是安装nginx咯
+```bash
+sudo apt-get install nginx
+```
+一般来说nginx被下载安装过后就会直接启动了，我们可以用查看它的运行情况
+```bash
+service nginx status
+
+# 或者直接在进程里面找
+
+ps -ef | grep nginx
+
+# 另一种方式
+
+cat nginx.pid # 2xxxx
+```
+
+这时候当然还不够，如果你想快点看到自己的成果比如下面这个东西
+![](https://image-static.segmentfault.com/374/292/3742927826-5982c11d50d21_articlex)
+那你就可以直接用我下面的流程，装完nginx之后会有一个给你放配置文件的地方
+```bash
+cd /etc/nginx/conf.d/
+```
+在这里我们创建自己的配置，比如我的站点叫`valtzhao`，那我就
+```bash
+vim valtzhao-website.conf
+```
+你可以先复制粘贴我的配置稍加修改就能用了，这里说明一下`root`参数，要指定到你的静态资源的位置，那么比如`vuepress`生成的`dist`包在`.vuepress`下，那这时候它的目录大概就是`/home/${user-name}/${repo-name}/.vuepress/dist`。最后一个需要万分注意的是，**nginx配置语句都是要分号结尾的**
+```
+server {
+  server_name valtzhao.com; // 你的域名或者 ip
+  root /home/${user-name}/${repo-name}/.vuepress/dist; // 你的克隆到的项目路径
+  index index.html; // 显示首页
+  location ~* ^.+\.(jpg|jpeg|gif|png|ico|css|js|pdf|txt){
+    root /home/${user-name}/${repo-name}/.vuepress/dist;
+  } // 静态文件访问
+}
+```
+
+## 释放你的80端口
+这时候其实服务已经好了，但你很有可能在浏览器输入你的网站URL之后还是不断地在loading，然后超时，为啥呢？这很有可能是你的服务器设置了80端口保护，还未启动。那我们从域名配置开始说好了。这时候假设你的服务器服务搭好了，域名也过备案了，这时候你只需要在域名解析处添加一个`A记录`，它用来把一个`ipv4`地址映射到一个域名上，这时候根据你的运营商的教程来做就好。
+
+### 设置安全组
+这时候你需要设置你的安全组，假设你是用的阿里云ECS，那么找到安全组设置，为安全组添加这样的端口开启设置
+![](http://cdn.valtzhao.com/img/80-secur-g-settings.png)
+这样就给自己的服务器打开了80端口的防火墙，接下来我们去主机里面设置一下就可以了
+
+### 主机内的设置
+首先检查一下自己的80端口是怎样的状态，是不是被占用了
+```bash
+netstat -an | grep 80
+
+# 以下结果是正常被监听的
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN
+```
+
+如果你已经启用 UFW（Ubuntu 预装防火墙），则需要放行 TCP 80 端口或 HTTP 服务：运行命令`ufw allow 80/tcp`或`ufw allow http`。返回结果为`Rule added`表示已经放行 TCP 80 端口或 HTTP 服务。
+
 # 参考资料
 > [使用 Travis CI 实现 GitHub + Server 自动部署](https:/blog.lbinin.com/frontEnd/Git/Travis-CI.html#travis-ci)</br></br>
 > [Travis-CI自动化测试并部署至自己的CentOS服务器](https://juejin.im/post/5a9e1a5751882555712bd8e1)</br></br>
 > [Linux chown改变文件所属关系命令](https://blog.51cto.com/zhaodongwei/1768576)</br></br>
 > [在Ubuntu上创建正确用户的步骤](https://www.digitalocean.com/community/questions/ubuntu-16-04-creating-new-user-and-adding-ssh-keys)</br></br>
 > [Ubuntu安装rvm](https://my.oschina.net/kelby/blog/193035)</br></br>
-> [安装rvm的坑，gunpg装不上没法装rvm，要更新成gnupg2](https://stackoverflow.com/questions/44555760/cant-install-ruby-rvm-on-ubuntu-16-04-due-to-gpg-bug)
+> [安装rvm的坑，gunpg装不上没法装rvm，要更新成gnupg2](https://stackoverflow.com/questions/44555760/cant-install-ruby-rvm-on-ubuntu-16-04-due-to-gpg-bug)</br></br>
+> [拿Nginx 部署你的静态网页](https://segmentfault.com/a/1190000010487262)</br></br>
+> [检查 TCP 80 端口是否正常工作](https://www.alibabacloud.com/help/zh/faq-detail/59367.htm)
