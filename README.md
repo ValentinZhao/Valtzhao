@@ -13,8 +13,8 @@ Still under construction.
 - [ ] Add Google Analytics
 - [ ] Add Google Site Verification
 - [ ] Add Baidu Site Verfication
-- [ ] Add English Version
-    - [ ] Deploy English version on another domain, i.e., `en.xxxx.com`, because [vuepress-theme-meteorlxy](https://github.com/meteorlxy/vuepress-theme-meteorlxy) still does not support locale configuration
+- [x] Add English Version
+    - [x] Deploy English version on another domain, i.e., `en.xxxx.com`, because [vuepress-theme-meteorlxy](https://github.com/meteorlxy/vuepress-theme-meteorlxy) still does not support locale configuration
 - [ ] Add Vssue as comment service
 - [ ] Work On SEO
     - [x] vuepress-seo-plugin

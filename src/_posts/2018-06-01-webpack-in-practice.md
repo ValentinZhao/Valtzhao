@@ -16,7 +16,7 @@ title: Webpack前端工程化配置
 ## 直接上手
 
 ### webpack.config.js
-```
+```javascript
 const path = require('path')
 module.exports = {
   entry:  './app/index.js', // 入口文件
@@ -28,7 +28,7 @@ module.exports = {
 ```
 
 ### index.html
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,7 +42,7 @@ module.exports = {
 ```
 
 ### package.json
-```
+```json
 "scripts": {
   "start": "webpack"
 }
@@ -61,7 +61,7 @@ Babel 可以让你使用 ES2015/16/17 写代码而不用顾忌浏览器的问题
 - babel-preset-env 这个库可以根据环境的不同转换代码
 
 #### webpack.config.js
-```
+```javascript
 module.exports = {
   // ......
   module: {
@@ -78,7 +78,7 @@ module.exports = {
 ```
 
 #### .babelrc
-```
+```json
 {
   "presets": ["babel-preset-env"]
 }
@@ -90,7 +90,7 @@ module.exports = {
 > npm i --save-dev url-loader file-loader
 
 在工程中引用这些图片，就像这样：
-```
+```javascript
 // addImage.js
 let smallImg = document.createElement('img')
 // 必须 require 进来
@@ -102,7 +102,7 @@ bigImg.src = require('../images/big.jpeg')
 document.body.appendChild(bigImg)
 ```
 然后添加对应的loader
-```
+```javascript
 module.exports = {
 // ...
     module: {
@@ -133,7 +133,7 @@ module.exports = {
 ![](https://user-gold-cdn.xitu.io/2017/9/15/b460ba75c92052ffd2df037b76af7ddb?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
 你会发现大的图片被提取出来，小的图片被打包进`bundle.js`了，这也就导致了页面上小图被加载，大图裂了的情况，其实就是路径不对，改一下webpack config即可
-```
+```javascript
 module.exports = {
     entry:  './app/index.js', // 入口文件
     output: {
@@ -147,7 +147,7 @@ module.exports = {
 
 ### 处理CSS
 为工程引入css文件，就像这样：
-```
+```css
 img {
     border: 5px black solid;
 }
@@ -160,7 +160,7 @@ img {
 > npm i --save-dev css-loader style-loader
 
 修改之前的js文件
-```
+```javascript
 import '../styles/addImage.css'
 
 let smallImg = document.createElement('img')
@@ -173,7 +173,7 @@ document.body.appendChild(smallImg)
 ```
 
 #### webpack.config.js
-```
+```javascript
 module.exports = {
 // ...
     module: {
@@ -204,7 +204,7 @@ module.exports = {
 > npm i --save-dev extract-text-webpack-plugin
 
 再次修改webpack config
-```
+```javascript
 const ExtractTextPlugin = require("extract-text-webpack-plugin")
 
 module.exports = {
@@ -243,7 +243,7 @@ module.exports = {
 
 ### 分离代码
 先让我们考虑下缓存机制。对于代码中依赖的库很少会去主动升级版本，但是我们自己的代码却每时每刻都在变更，所以我们可以考虑将依赖的库和自己的代码分割开来，这样用户在下一次使用应用时就可以尽量避免重复下载没有变更的代码，那么既然要将依赖代码提取出来，我们需要变更下入口和出口的部分代码。
-```
+```javascript
 // 这是 packet.json 中 dependencies 下的
 const VENDOR = [
   "faker",
@@ -280,7 +280,7 @@ module.exports = {
 
 #### 抽取共同代码
 此时就要用到`CommonsChunkPlugin`了
-```
+```javascript
 module.exports = {
 //...
   output: {
@@ -305,7 +305,7 @@ module.exports = {
 
 > npm install --save-dev clean-webpack-plugin
 
-```
+```javascript
 module.exports = {
 //...
   plugins: [
@@ -323,7 +323,7 @@ module.exports = {
 
 > npm install html-webpack-plugin --save-dev
 
-```
+```javascript
 module.exports = {
 //...
   plugins: [
@@ -347,7 +347,7 @@ module.exports = {
 > npm i --save-dev webpack-dev-server
 
 接着修改`package.json`
-```
+```json
 "scripts": {
     "build": "webpack",
     "dev": "webpack-dev-server --open"
@@ -365,7 +365,7 @@ module.exports = {
 > npm i --save-dev url-loader optimize-css-assets-webpack-plugin file-loader extract-text-webpack-plugin
 
 一份标准的config
-```
+```javascript
 var webpack = require('webpack');
 var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -468,7 +468,7 @@ module.exports = {
 ![](https://user-gold-cdn.xitu.io/2017/9/17/ff8acf374946ee6db118117f22ec48f5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 可以看到我们在经历了这么多步以后，将 bundle 缩小到了只有 27.1KB，像 vendor 这种常用的库我们一般可以使用 CDN 的方式外链进来。
 ### 补充技巧
-```
+```javascript
 module.exports = {
   resolve: {
   // 文件扩展名，写明以后就不需要每个文件写后缀
