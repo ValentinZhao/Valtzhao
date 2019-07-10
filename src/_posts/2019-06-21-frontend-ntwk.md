@@ -12,7 +12,7 @@ title: 前端基础——计算机网络篇
 <!-- more -->
 
 # 网络模型
-![network model]()
+![network model](http://cdn.valtzhao.com/img/network_model.png)
 
 - `TCP/IP 四层模型` 应用层、运输层、网际层和网络接口层。从实质上讲，只有上边三层，网络接口层没有什么具体的内容。HTTP 对应应用层。
 
@@ -53,7 +53,7 @@ title: 前端基础——计算机网络篇
 
 # TCP
 ## 三次握手建立连接
-![TCP connect]()
+![TCP connect](http://cdn.valtzhao.com/img/tcp_connect.png)
 
 1. 客户端请求建立`TCP`连接，标记`SYN(Synchronize Sequence Numbers，同步序列号)`为`1`，并发送客户端的序列号`x`，即`SYN=1;seq=x`。发送完毕后，客户端进入`SYN_SEND`状态。
 2. 服务器收到后，标记`ACK(Acknowledgement)`为`1`，返回一个确认码`ack`，值为客户端序列号`加1`，并发送自己的同步序列号`y`给客户端，即`SYN=1;seq=y;ACK=1;ack=x+1`。发送完毕后，服务器端进入`SYN_RCVD`状态，一段时间后没收到回复，自动尝试**5**次重新发送确认报文，每次时间间隔指数递增`(1s,2s,4s,8s,16s)`，第**5**次后等待`31s`后`(总共 63s)`才能断开连接。
@@ -61,7 +61,7 @@ title: 前端基础——计算机网络篇
 > 注意：客户端发送每次`TCP`报文时`seq`都会递增`1`，便于收到报文后确认报文发送的先后顺序。第三次握手不需要发送`SYN=1`信号，因为不是初始建立连接状态，如果标记为`1`那么服务器又会认为是建立一个新连接了。
 
 ## 四次握手关闭连接(以客户端发起关闭为例)
-![TCP finis]()
+![TCP finis](http://cdn.valtzhao.com/img/tcp_finish.png)
 
 1. 客户端请求关闭连接，标记`FIN(finish)`标记为`1`，带上序列号`u`，这个时候客户端还可以接收数据但是不再发送数据了。
 2. 服务器收到请求后标记`ACK`为`1`，返回确认码`u+1`，告诉客户端它收到了，服务器开始关闭连接（发送剩余数据等等操作）。
@@ -95,11 +95,11 @@ title: 前端基础——计算机网络篇
 
 `A`发送`11`个字节后，发送窗口位置不变，`B`接收到了乱序的数据分组：
 
-![TCP Slide 1]()
+![TCP Slide 1](http://cdn.valtzhao.com/img/tcp_slide1.png)
 
 只有当`A`成功发送了数据，即发送的数据得到了`B`的确认之后，才会移动滑动窗口离开已发送的数据；同时`B`则确认连续的数据分组，对于乱序的分组则先接收下来，避免网络重复传递：
 
-![TCP Slide 2]()
+![TCP Slide 2](http://cdn.valtzhao.com/img/tcp_slide2.png)
 
 ### 流量控制
 流量控制方面主要有两个要点需要掌握。一是`TCP`利用滑动窗口实现流量控制的机制；二是如何考虑流量控制中的传输效率。
@@ -131,7 +131,7 @@ title: 前端基础——计算机网络篇
 
 通过图我们来一步步解释：
 
-![TCP Slow Start]()
+![TCP Slow Start](http://cdn.valtzhao.com/img/tcp_slow_start.png)
 
 发送方维持一个`“拥塞窗口”(cwnd,congestion window)`的变量，与发送方的`允许窗口大小(rwnd,receiver window)`共同决定发送窗口大小，显然`cwnd`是不能超过`rwnd`的。
 当开始发送数据时，避免一下子将大量字节注入到网络，造成或者增加拥塞，选择发送一个`1`字节的试探报文，收到确认后尝试发送`2`字节，收到确认再发`4`字节，等等，以此类推，以`2`的指数级增长。
@@ -142,7 +142,7 @@ title: 前端基础——计算机网络篇
 
 2. 快重传、快恢复：
 
-![TCP Fast Restore]()
+![TCP Fast Restore](http://cdn.valtzhao.com/img/tcp_fast_start.png)
 
 - 接收方建立这样的机制，如果一个包丢失，则对后续的包继续发送针对该包的重传请求。
 - 一旦发送方接收到三个一样的确认，就知道该包之后出现了错误，立刻重传该包。
@@ -327,7 +327,7 @@ function receiveMessage(event) {
 `X-Frame-Options`响应头。用来给浏览器指示允许一个页面可否在`<frame>, </iframe>`或者 `<object>`中展现的标记。网站可以使用此功能，来确保自己网站的内容没有被嵌到别人的网站中去，也从而避免了点击劫持的攻击。
 
 ## `CSRF`(Cross-site Request Forgery，跨站请求伪造)
-![CSRF]()
+![CSRF](http://cdn.valtzhao.com/img/csrf_process.png)
 
 ### 防御
 `Cookie-to-Header Token`: 表单的数据需要一个`token`，这个`token`通过`cookie`来生成，服务器验证。这样攻击者伪造的请求中`token`不对就认为是一次`CSRF`攻击。
